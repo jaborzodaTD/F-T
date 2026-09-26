@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Для Тахмины ❤️</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050208;
+            --bg-card: rgba(22, 8, 19, 0.75);
+            --primary-red: #e63956;
+            --rose-glow: rgba(230, 57, 86, 0.35);
+            --accent-pink: #ff85a2;
+            --text-main: #f8f9fa;
+            --text-muted: #b8b0c0;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --font-title: 'Cormorant Garamond', serif;
+            --font-body: 'Montserrat', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+        }
+
+        body {
+            overflow-x: hidden;
+            position: relative;
+            line-height: 1.7;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Float Music Button */
+        .music-btn {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            background: rgba(15, 5, 12, 0.85);
+            border: 1px solid var(--rose-glow);
+            color: var(--text-main);
+            padding: 10px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 15px var(--rose-glow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Loader */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: radial-gradient(circle at center, #1a050f 0%, var(--bg-dark) 100%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            transition: opacity 1s ease;
+        }
+
+        .loader-subtitle {
+            font-family: var(--font-title);
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            opacity: 0;
+            animation: fadeIn 2s forwards 0.3s;
+        }
+
+        .loader-title {
+            font-family: var(--font-title);
+            font-size: 3rem;
+            color: var(--primary-red);
+            text-shadow: 0 0 25px var(--rose-glow);
+            margin: 15px 0 30px;
+            opacity: 0;
+            animation: fadeIn 2s forwards 1.8s, heartbeat 2s infinite ease-in-out 3.5s;
+        }
+
+        .btn-main {
+            background: linear-gradient(135deg, var(--primary-red), #9e1b32);
+            color: #fff;
+            border: none;
+            padding: 16px 36px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 25px var(--rose-glow);
+            opacity: 0;
+            animation: fadeIn 1.5s forwards 3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 750px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .glass-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 35px 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            margin: 35px 0;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.9s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            font-family: var(--font-title);
+            font-size: clamp(2rem, 5vw, 2.6rem);
+            color: var(--text-main);
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .section-title::after {
+            content: '❤️';
+            display: block;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        .main-motto {
+            background: linear-gradient(90deg, transparent, rgba(230, 57, 86, 0.15), transparent);
+            border-top: 1px solid var(--rose-glow);
+            border-bottom: 1px solid var(--rose-glow);
+            padding: 20px;
+            text-align: center;
+            font-family: var(--font-title);
+            font-size: 1.25rem;
+            font-style: italic;
+            color: var(--accent-pink);
+            margin: 40px 0;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px 20px 20px;
+        }
+
+        .hero h1 {
+            font-family: var(--font-title);
+            font-size: clamp(2.4rem, 7vw, 4rem);
+            font-weight: 700;
+            background: linear-gradient(180deg, #ffffff 30%, #ffb3c1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 35px;
+            font-weight: 300;
+        }
+
+        /* Dynamic Photo Card with Tap-to-Upload feature */
+        .photo-card {
+            width: 100%;
+            height: 250px;
+            margin: 25px 0;
+            border-radius: 20px;
+            border: 1px solid var(--rose-glow);
+            background: linear-gradient(135deg, rgba(40, 10, 25, 0.6), rgba(15, 3, 10, 0.8));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: inset 0 0 20px rgba(230, 57, 86, 0.2);
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .photo-card-content {
+            z-index: 2;
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .photo-card-content svg {
+            width: 40px;
+            height: 40px;
+            fill: var(--accent-pink);
+            margin-bottom: 8px;
+        }
+
+        /* Distance Section */
+        .distance-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 35px 0;
+        }
+
+        .person-card {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .distance-line-wrap {
+            flex-grow: 1;
+            position: relative;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0 12px;
+        }
+
+        .moving-heart {
+            position: absolute;
+            top: 50%;
+            left: 0%;
+            transform: translate(-50%, -50%);
+            font-size: 1.3rem;
+            animation: moveHeart 4s infinite ease-in-out alternate;
+        }
+
+        @keyframes moveHeart {
+            0% { left: 5%; }
+            100% { left: 95%; }
+        }
+
+        .distance-quote {
+            font-size: 1rem;
+            background: rgba(42, 8, 19, 0.5);
+            padding: 18px;
+            border-left: 3px solid var(--primary-red);
+            margin: 20px 0;
+            border-radius: 0 14px 14px 0;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 25px;
+            margin: 30px 0;
+            border-left: 2px solid rgba(230, 57, 86, 0.3);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -34px;
+            top: 2px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary-red);
+            box-shadow: 0 0 10px var(--primary-red);
+        }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 14px 18px;
+            border-radius: 14px;
+            font-size: 0.98rem;
+        }
+
+        /* Promises */
+        .promise-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 16px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+        }
+
+        .promise-title {
+            color: var(--accent-pink);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        /* Interactive Heart */
+        .interactive-heart-box {
+            text-align: center;
+            padding: 40px 10px;
+        }
+
+        .big-heart-btn {
+            font-size: 5.5rem;
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            filter: drop-shadow(0 0 20px var(--rose-glow));
+            animation: heartbeat 1.5s infinite;
+        }
+
+        .heart-reveal-msg {
+            margin-top: 20px;
+            font-family: var(--font-title);
+            font-size: 1.5rem;
+            color: var(--accent-pink);
+            opacity: 0;
+            transition: all 0.6s ease;
+        }
+
+        .heart-reveal-msg.show {
+            opacity: 1;
+        }
+
+        .floating-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            animation: floatUp 2.5s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(0.8); }
+            100% { opacity: 0; transform: translateY(-180px) scale(1.4); }
+        }
+
+        /* Finale */
+        .finale-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px 20px;
+            background: radial-gradient(circle at center, #15030c 0%, #000000 100%);
+        }
+
+        .finale-line {
+            font-family: var(--font-title);
+            font-size: clamp(1.3rem, 4vw, 2.2rem);
+            margin: 10px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease;
+            color: #f1e6f5;
+        }
+
+        .finale-line.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .finale-bold {
+            font-size: clamp(1.5rem, 5vw, 2.4rem);
+            color: var(--primary-red);
+            font-weight: 700;
+            margin: 25px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.15); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.08); }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <button class="music-btn" onclick="toggleMusic()">
+        <span id="musicIcon">🎵</span> <span id="musicText">Включить музыку</span>
+    </button>
+
+    <!-- 1. LOADING SCREEN -->
+    <div id="loader">
+        <div class="loader-subtitle">Для одной особенной девушки…</div>
+        <div class="loader-title">Тахмина ❤️</div>
+        <button class="btn-main" onclick="openHeart()">Открыть моё сердце</button>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main-content" style="display: none;">
+
+        <!-- 2. HERO -->
+        <section class="hero">
+            <div class="container">
+                <h1 class="reveal">Тахмина, я тебя люблю.</h1>
+                <p class="reveal">И сегодня я хочу сказать тебе то, что иногда мне сложно сказать словами.</p>
+                <a href="#letter" class="btn-main reveal">Прочитать моё письмо ↓</a>
+            </div>
+        </section>
+
+        <div class="main-motto reveal">
+            «Расстояние между нами — это всего лишь расстояние. Моё сердце всё равно рядом с тобой.»
+        </div>
+
+        <div class="container">
+
+            <!-- 3. LETTER -->
+            <section id="letter" class="glass-card reveal">
+                <h2 class="section-title">Моё письмо тебе</h2>
+                <div style="font-size: 1.02rem; color: #e2d9e6;">
+                    <p>Тахмина…</p><br>
+                    <p>Если ты сейчас читаешь это, значит, я наконец смог собрать свои мысли в одном месте.</p><br>
+                    <p>Я хочу сказать тебе самое простое и самое важное:</p>
+                    
+                    <div style="font-family: var(--font-title); font-size: 1.8rem; color: var(--primary-red); text-align: center; margin: 20px 0; font-weight: 600;">
+                        Я тебя люблю. Очень.
+                    </div>
+
+                    <p>Ты стала для меня человеком, который занимает особенное место в моём сердце.</p><br>
+                    <p>Мне нравится думать о тебе, разговаривать с тобой, мечтать о нашем будущем и представлять тот день, когда расстояние между нами больше не будет иметь значения.</p>
+
+                    <!-- INTERACTIVE PHOTO CARD 1 -->
+                    <div class="photo-card" onclick="document.getElementById('file1').click()">
+                        <input type="file" id="file1" accept="image/*" style="display:none;" onchange="loadPhoto(event, 'img1')">
+                        <img id="img1" src="" style="display:none;">
+                        <div class="photo-card-content" id="phContent1">
+                            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                            <div style="color: #fff; font-weight: 600; font-size: 0.95rem;">Наша фотография ❤️</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">(Нажмите, чтобы выбрать фото с телефона)</div>
+                        </div>
+                    </div>
+
+                    <p>Ты не идеальная. Я тоже не идеальный.</p><br>
+                    <p>Но именно поэтому наши отношения для меня настоящие.</p><br>
+                    <p>Я знаю, что совершал ошибки.<br>
+                    Иногда мог сказать что-то не так.<br>
+                    Иногда мог поступить неправильно.<br>
+                    Иногда мог сделать тебе больно.</p><br>
+                    
+                    <p style="text-align: center; font-weight: 600; color: var(--accent-pink);">
+                        И за это я хочу сказать тебе:<br>
+                        <span style="font-size: 1.4rem; color: var(--primary-red);">Прости меня, Тахмина. ❤️</span>
+                    </p><br>
+                    <p>Я не хочу обещать тебе, что никогда больше не ошибусь.</p>
+                    <p>Я хочу обещать другое: <strong>что буду учиться быть лучше для тебя.</strong></p>
+                </div>
+            </section>
+
+            <!-- 4. DISTANCE -->
+            <section class="glass-card reveal">
+                <h2 class="section-title">Нас разделяет расстояние</h2>
+                
+                <div class="distance-container">
+                    <div class="person-card">Файзали ❤️</div>
+                    <div class="distance-line-wrap">
+                        <div class="moving-heart">❤️</div>
+                    </div>
+                    <div class="person-card">Тахмина ❤️</div>
+                </div>
+
+                <p style="text-align: center;">Сейчас между нами расстояние.<br>Но я не считаю километры причиной отказаться от нас.</p>
+
+                <div class="distance-quote">
+                    <strong>«Пусть между нами города и километры. Я всё равно чувствую тебя близко. Для меня настоящая любовь — это не только быть рядом, когда всё легко. Это оставаться рядом сердцем даже тогда, когда физически мы далеко.»</strong>
+                </div>
+
+                <p style="text-align: center; font-size: 1.2rem; font-weight: 600; color: var(--accent-pink);">
+                    Мы справимся. ❤️
+                </p>
+            </section>
+
+            <!-- 5. TIMELINE -->
+            <section class="glass-card reveal">
+                <h2 class="section-title">Наша история ещё не закончена</h2>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">❤️ Мы встретились</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">❤️ Мы начали становиться ближе</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">❤️ Были счастливые моменты</div>
+                    </div>
+
+                    <!-- INTERACTIVE PHOTO CARD 2 -->
+                    <div class="photo-card" style="height: 200px;" onclick="document.getElementById('file2').click()">
+                        <input type="file" id="file2" accept="image/*" style="display:none;" onchange="loadPhoto(event, 'img2')">
+                        <img id="img2" src="" style="display:none;">
+                        <div class="photo-card-content" id="phContent2">
+                            <div style="color: #fff; font-weight: 600; font-size: 0.9rem;">✨ Наше воспоминание</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">(Нажмите, чтобы добавить фото)</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">💔 Были ошибки и трудности</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">🌍 Появилось расстояние</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">🤝 Но мы всё ещё здесь</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot" style="background: #fff; box-shadow: 0 0 12px #fff;"></div>
+                        <div class="timeline-content" style="border-color: var(--primary-red); font-weight: 600;">💍 А дальше — наше будущее</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. FORGIVENESS -->
+            <section class="glass-card reveal" style="text-align: center;">
+                <h2 class="section-title">Тахмина, прости меня…</h2>
+                <p>Я знаю, что одних слов недостаточно.</p><br>
+                <p>Поэтому я не хочу просто говорить “прости”.</p><br>
+                <p>Я хочу доказать тебе своими поступками, что могу стать лучше.</p><br>
+                <p>Я хочу, чтобы рядом со мной ты чувствовала любовь, уважение, спокойствие и уверенность.</p><br>
+                <p>Я не могу стереть прошлые ошибки. Но я могу сделать всё, чтобы наше будущее было другим.</p>
+                
+                <div style="font-size: 1.2rem; margin-top: 25px; color: var(--accent-pink); font-weight: 600;">
+                    Я действительно дорожу тобой. ❤️
+                </div>
+            </section>
+
+            <!-- 7. FUTURE -->
+            <section class="glass-card reveal">
+                <div style="text-align: center; font-size: 3.5rem; margin-bottom: 10px;">💖</div>
+                <h2 class="section-title">Я хочу наше будущее</h2>
+                <p>Я хочу однажды перестать считать километры.</p>
+                <p>Хочу увидеть тебя рядом.</p>
+                <p>Хочу вместе гулять, смеяться, спорить из-за мелочей и снова мириться.</p>
+                <p>Хочу поддерживать тебя, когда тебе тяжело.</p>
+                <p>Хочу радоваться твоим успехам.</p>
+                <p>Хочу строить вместе с тобой нашу жизнь.</p>
+                <p>И я мечтаю о том дне, когда мы станем семьёй.</p>
+                <p>Когда всё, через что мы прошли, останется позади.</p>
+                <p style="text-align: center; margin-top: 20px; font-size: 1.2rem;">
+                    И мы посмотрим друг на друга и скажем: <br>
+                    <strong style="font-size: 1.5rem; color: var(--primary-red);">“Мы смогли.” ❤️</strong>
+                </p>
+            </section>
+
+            <!-- 8. PROMISES -->
+            <section class="glass-card reveal">
+                <h2 class="section-title">Моё обещание тебе</h2>
+                <div class="promise-item">
+                    <div class="promise-title">Я не обещаю идеальную жизнь.</div>
+                    <div>Я обещаю стараться.</div>
+                </div>
+                <div class="promise-item">
+                    <div class="promise-title">Не обещаю, что никогда не будет трудностей.</div>
+                    <div>Я обещаю не убегать от них.</div>
+                </div>
+                <div class="promise-item">
+                    <div class="promise-title">Не обещаю, что никогда не ошибусь.</div>
+                    <div>Я обещаю признавать свои ошибки и исправляться.</div>
+                </div>
+                <div class="promise-item" style="border-color: var(--primary-red);">
+                    <div class="promise-title" style="color: var(--primary-red);">И самое главное…</div>
+                    <div><strong>Я обещаю помнить, почему я выбрал именно тебя.</strong></div>
+                </div>
+            </section>
+
+            <!-- 9. INTERACTIVE HEART -->
+            <section class="glass-card interactive-heart-box reveal">
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px;">Нажми на сердце</p>
+                <div class="big-heart-btn" onclick="triggerHeartBurst(event)">❤️</div>
+                <div class="heart-reveal-msg" id="heartMsg">
+                    Вот примерно так моё сердце чувствует себя, когда думает о тебе. ❤️
+                </div>
+            </section>
+
+        </div>
+
+        <!-- 10. FINALE -->
+        <section class="finale-section" id="finale">
+            <div class="container">
+                <div class="finale-line" id="f1">Тахмина…</div>
+                <div class="finale-line" id="f2">Я тебя люблю.</div>
+                <div class="finale-line" id="f3">И я не хочу, чтобы наша история закончилась здесь.</div>
+                <div class="finale-line" id="f4" style="font-size: 4.5rem; margin: 15px 0;">❤️</div>
+                <div class="finale-line" id="f5">Я хочу пройти этот путь вместе с тобой.</div>
+                <div class="finale-line" id="f6">Через расстояние.</div>
+                <div class="finale-line" id="f7">Через трудности.</div>
+                <div class="finale-line" id="f8">Через ошибки.</div>
+                <div class="finale-line" id="f9">Через всё.</div>
+                <div class="finale-line finale-bold" id="f10">
+                    «Пока однажды мы не посмотрим назад и не скажем:<br>“Мы смогли.” ❤️»
+                </div>
+                <div class="finale-line" id="f11" style="font-family: var(--font-title); font-size: 1.5rem; color: var(--accent-pink); margin-top: 25px;">
+                    С любовью, Файзали.
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="container">
+                <button class="btn-main" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" style="margin-bottom: 25px; font-size: 0.85rem; padding: 10px 24px;">
+                    Посмотреть ещё раз ❤️
+                </button>
+                <p style="font-family: var(--font-title); font-size: 1.3rem; color: var(--accent-pink);">Файзали × Тахмина</p>
+                <p style="opacity: 0.6; font-size: 0.75rem; margin-top: 8px;">Создано с любовью специально для Тахмины ❤️</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        /* Background Canvas */
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        class Star {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2;
+                this.alpha = Math.random();
+                this.speed = Math.random() * 0.008 + 0.002;
+            }
+            update() {
+                this.alpha += this.speed;
+                if (this.alpha > 1 || this.alpha < 0) this.speed = -this.speed;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(this.alpha)})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        const stars = Array.from({ length: 90 }, () => new Star());
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            stars.forEach(s => { s.update(); s.draw(); });
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        /* Loader & Scroll */
+        function openHeart() {
+            document.getElementById('loader').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                initObserver();
+            }, 1000);
+            if(!isAudioPlaying) toggleMusic();
+        }
+
+        function initObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+            const finaleObserver = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) triggerFinale();
+            }, { threshold: 0.2 });
+            finaleObserver.observe(document.getElementById('finale'));
+        }
+
+        let finaleDone = false;
+        function triggerFinale() {
+            if (finaleDone) return;
+            finaleDone = true;
+            const ids = ['f1','f2','f3','f4','f5','f6','f7','f8','f9','f10','f11'];
+            ids.forEach((id, i) => {
+                setTimeout(() => {
+                    const el = document.getElementById(id);
+                    if(el) el.classList.add('visible');
+                }, i * 1100);
+            });
+        }
+
+        function triggerHeartBurst(e) {
+            document.getElementById('heartMsg').classList.add('show');
+            const syms = ['❤️', '💖', '✨', '🌸'];
+            for (let i = 0; i < 20; i++) {
+                const h = document.createElement('div');
+                h.className = 'floating-heart';
+                h.innerText = syms[Math.floor(Math.random() * syms.length)];
+                h.style.left = `${e.clientX + (Math.random() - 0.5) * 160}px`;
+                h.style.top = `${e.clientY + (Math.random() - 0.5) * 80}px`;
+                h.style.fontSize = `${Math.random() * 1.2 + 1}rem`;
+                document.body.appendChild(h);
+                setTimeout(() => h.remove(), 2500);
+            }
+        }
+
+        /* Photo Loader from Phone */
+        function loadPhoto(event, imgId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById(imgId);
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        /* Music Synth */
+        let audioCtx, isAudioPlaying = false, oscs = [];
+        function toggleMusic() {
+            const txt = document.getElementById('musicText');
+            if (!isAudioPlaying) {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                
+                const freqs = [174.61, 220.00, 261.63, 329.63];
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                gain.connect(audioCtx.destination);
+
+                oscs = freqs.map(f => {
+                    const o = audioCtx.createOscillator();
+                    o.type = 'sine';
+                    o.frequency.setValueAtTime(f, audioCtx.currentTime);
+                    o.connect(gain);
+                    o.start();
+                    return o;
+                });
+                isAudioPlaying = true;
+                txt.innerText = "Пауза";
+            } else {
+                oscs.forEach(o => o.stop());
+                oscs = [];
+                isAudioPlaying = false;
+                txt.innerText = "Включить музыку";
+            }
+        }
+    </script>
+</body>
+</html>
