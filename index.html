@@ -197,7 +197,7 @@
   isTajik=!isTajik;document.documentElement.lang=isTajik?'tg':'ru';document.getElementById('langToggle').textContent=isTajik?'RU / TJ':'TJ / RU';
   document.querySelectorAll('[data-ru][data-tj]').forEach(el=>{el.textContent=isTajik?el.dataset.tj:el.dataset.ru;});
   document.querySelectorAll('.nav-links a').forEach(a=>{const original=a.dataset.original||(a.dataset.original=a.textContent);a.textContent=isTajik?(translations[original]||original):original;});
-  if(isTajik){notify('Қисми асосии матн ба тоҷикӣ гузаронида шуд; оятҳои Қуръон бо матни аслӣ нигоҳ дошта мешаванд.');}
+  if(isTajik){notify('Қисми интерфейс ба тоҷикӣ гузашт; матни пурраи қисса ҳоло асосан ба русӣ аст.');}
  });
 })();
 </script>
