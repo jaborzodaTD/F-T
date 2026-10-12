@@ -1,826 +1,205 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Для Тахмины ❤️</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-dark: #050208;
-            --bg-card: rgba(22, 8, 19, 0.75);
-            --primary-red: #e63956;
-            --rose-glow: rgba(230, 57, 86, 0.35);
-            --accent-pink: #ff85a2;
-            --text-main: #f8f9fa;
-            --text-muted: #b8b0c0;
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --font-title: 'Cormorant Garamond', serif;
-            --font-body: 'Montserrat', sans-serif;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: var(--font-body);
-            overflow-x: hidden;
-        }
-
-        body {
-            overflow-x: hidden;
-            position: relative;
-            line-height: 1.7;
-        }
-
-        #bg-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* Float Music Button */
-        .music-btn {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            z-index: 1000;
-            background: rgba(15, 5, 12, 0.85);
-            border: 1px solid var(--rose-glow);
-            color: var(--text-main);
-            padding: 10px 16px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 15px var(--rose-glow);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Loader */
-        #loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: radial-gradient(circle at center, #1a050f 0%, var(--bg-dark) 100%);
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-            transition: opacity 1s ease;
-        }
-
-        .loader-subtitle {
-            font-family: var(--font-title);
-            font-size: 1.4rem;
-            color: var(--text-muted);
-            opacity: 0;
-            animation: fadeIn 2s forwards 0.3s;
-        }
-
-        .loader-title {
-            font-family: var(--font-title);
-            font-size: 3rem;
-            color: var(--primary-red);
-            text-shadow: 0 0 25px var(--rose-glow);
-            margin: 15px 0 30px;
-            opacity: 0;
-            animation: fadeIn 2s forwards 1.8s, heartbeat 2s infinite ease-in-out 3.5s;
-        }
-
-        .btn-main {
-            background: linear-gradient(135deg, var(--primary-red), #9e1b32);
-            color: #fff;
-            border: none;
-            padding: 16px 36px;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 0 25px var(--rose-glow);
-            opacity: 0;
-            animation: fadeIn 1.5s forwards 3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 750px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .glass-card {
-            background: var(--bg-card);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: 24px;
-            padding: 35px 25px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            margin: 35px 0;
-        }
-
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.9s ease-out;
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .section-title {
-            font-family: var(--font-title);
-            font-size: clamp(2rem, 5vw, 2.6rem);
-            color: var(--text-main);
-            text-align: center;
-            margin-bottom: 25px;
-            font-weight: 600;
-        }
-
-        .section-title::after {
-            content: '❤️';
-            display: block;
-            font-size: 0.9rem;
-            margin-top: 8px;
-        }
-
-        .main-motto {
-            background: linear-gradient(90deg, transparent, rgba(230, 57, 86, 0.15), transparent);
-            border-top: 1px solid var(--rose-glow);
-            border-bottom: 1px solid var(--rose-glow);
-            padding: 20px;
-            text-align: center;
-            font-family: var(--font-title);
-            font-size: 1.25rem;
-            font-style: italic;
-            color: var(--accent-pink);
-            margin: 40px 0;
-        }
-
-        /* Hero */
-        .hero {
-            min-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 60px 20px 20px;
-        }
-
-        .hero h1 {
-            font-family: var(--font-title);
-            font-size: clamp(2.4rem, 7vw, 4rem);
-            font-weight: 700;
-            background: linear-gradient(180deg, #ffffff 30%, #ffb3c1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-
-        .hero p {
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            color: var(--text-muted);
-            max-width: 600px;
-            margin-bottom: 35px;
-            font-weight: 300;
-        }
-
-        /* Dynamic Photo Card with Tap-to-Upload feature */
-        .photo-card {
-            width: 100%;
-            height: 250px;
-            margin: 25px 0;
-            border-radius: 20px;
-            border: 1px solid var(--rose-glow);
-            background: linear-gradient(135deg, rgba(40, 10, 25, 0.6), rgba(15, 3, 10, 0.8));
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            box-shadow: inset 0 0 20px rgba(230, 57, 86, 0.2);
-        }
-
-        .photo-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .photo-card-content {
-            z-index: 2;
-            text-align: center;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(4px);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .photo-card-content svg {
-            width: 40px;
-            height: 40px;
-            fill: var(--accent-pink);
-            margin-bottom: 8px;
-        }
-
-        /* Distance Section */
-        .distance-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 35px 0;
-        }
-
-        .person-card {
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: #fff;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px 16px;
-            border-radius: 14px;
-            border: 1px solid var(--glass-border);
-        }
-
-        .distance-line-wrap {
-            flex-grow: 1;
-            position: relative;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.1);
-            margin: 0 12px;
-        }
-
-        .moving-heart {
-            position: absolute;
-            top: 50%;
-            left: 0%;
-            transform: translate(-50%, -50%);
-            font-size: 1.3rem;
-            animation: moveHeart 4s infinite ease-in-out alternate;
-        }
-
-        @keyframes moveHeart {
-            0% { left: 5%; }
-            100% { left: 95%; }
-        }
-
-        .distance-quote {
-            font-size: 1rem;
-            background: rgba(42, 8, 19, 0.5);
-            padding: 18px;
-            border-left: 3px solid var(--primary-red);
-            margin: 20px 0;
-            border-radius: 0 14px 14px 0;
-        }
-
-        /* Timeline */
-        .timeline {
-            position: relative;
-            padding-left: 25px;
-            margin: 30px 0;
-            border-left: 2px solid rgba(230, 57, 86, 0.3);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 25px;
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: -34px;
-            top: 2px;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--primary-red);
-            box-shadow: 0 0 10px var(--primary-red);
-        }
-
-        .timeline-content {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
-            padding: 14px 18px;
-            border-radius: 14px;
-            font-size: 0.98rem;
-        }
-
-        /* Promises */
-        .promise-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
-            padding: 16px;
-            border-radius: 14px;
-            margin-bottom: 12px;
-        }
-
-        .promise-title {
-            color: var(--accent-pink);
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        /* Interactive Heart */
-        .interactive-heart-box {
-            text-align: center;
-            padding: 40px 10px;
-        }
-
-        .big-heart-btn {
-            font-size: 5.5rem;
-            cursor: pointer;
-            user-select: none;
-            display: inline-block;
-            filter: drop-shadow(0 0 20px var(--rose-glow));
-            animation: heartbeat 1.5s infinite;
-        }
-
-        .heart-reveal-msg {
-            margin-top: 20px;
-            font-family: var(--font-title);
-            font-size: 1.5rem;
-            color: var(--accent-pink);
-            opacity: 0;
-            transition: all 0.6s ease;
-        }
-
-        .heart-reveal-msg.show {
-            opacity: 1;
-        }
-
-        .floating-heart {
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            animation: floatUp 2.5s ease-out forwards;
-        }
-
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(0.8); }
-            100% { opacity: 0; transform: translateY(-180px) scale(1.4); }
-        }
-
-        /* Finale */
-        .finale-section {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 60px 20px;
-            background: radial-gradient(circle at center, #15030c 0%, #000000 100%);
-        }
-
-        .finale-line {
-            font-family: var(--font-title);
-            font-size: clamp(1.3rem, 4vw, 2.2rem);
-            margin: 10px 0;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 1s ease;
-            color: #f1e6f5;
-        }
-
-        .finale-line.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .finale-bold {
-            font-size: clamp(1.5rem, 5vw, 2.4rem);
-            color: var(--primary-red);
-            font-weight: 700;
-            margin: 25px 0;
-        }
-
-        footer {
-            text-align: center;
-            padding: 40px 20px 60px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        @keyframes fadeIn { to { opacity: 1; } }
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            15% { transform: scale(1.15); }
-            30% { transform: scale(1); }
-            45% { transform: scale(1.08); }
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#081b16">
+<meta name="description" content="Личное письмо Файзали для Тахмины — о любви, вере, жизненном пути и надежде на будущее.">
+<title>Тахмина — письмо от Файзали</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#071611;--bg2:#0b211a;--panel:rgba(18,43,33,.76);--gold:#d6b878;--gold2:#f0dfb2;--ivory:#f4efe3;--muted:#b6c2b9;--line:rgba(214,184,120,.24);--rose:#b86d72;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Manrope',Arial,sans-serif;--arabic:'Amiri',serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:84px}body{margin:0;background:var(--bg);color:var(--ivory);font-family:var(--sans);line-height:1.75;overflow-x:hidden}body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(ellipse at 15% 15%,rgba(31,89,65,.27),transparent 40%),radial-gradient(ellipse at 90% 65%,rgba(107,69,48,.13),transparent 38%),linear-gradient(180deg,#071611,#091a14 55%,#07130f)}a{color:inherit}button{font:inherit;cursor:pointer}.ornament{color:var(--gold);letter-spacing:.45em;font-size:.78rem;text-transform:uppercase}.gold{color:var(--gold2)}.muted{color:var(--muted)}.serif{font-family:var(--serif)}.container{width:min(1120px,calc(100% - 40px));margin-inline:auto}.section{padding:110px 0;position:relative}.section-kicker{color:var(--gold);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:15px}.section-title{font:500 clamp(2.6rem,6vw,4.7rem)/.98 var(--serif);margin:0 0 25px;letter-spacing:-.025em}.section-lead{max-width:680px;color:#d2d8cf;font-size:1rem}.rule{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:28px 0}.btn{border:1px solid var(--line);border-radius:999px;padding:13px 22px;color:var(--ivory);background:rgba(255,255,255,.035);display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:.25s ease}.btn:hover{background:rgba(214,184,120,.12);border-color:var(--gold);transform:translateY(-2px)}.btn.primary{background:var(--gold);color:#12231a;border-color:var(--gold);font-weight:700}.btn.small{padding:8px 13px;font-size:.82rem}.nav{position:sticky;top:0;z-index:20;background:rgba(7,22,17,.82);backdrop-filter:blur(18px);border-bottom:1px solid rgba(214,184,120,.12)}.nav-inner{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none}.brand-mark{width:35px;height:35px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:1.05rem}.brand-name{font:600 1.1rem var(--serif);letter-spacing:.04em}.nav-links{display:flex;gap:21px;align-items:center}.nav-links a{text-decoration:none;color:#d4ddd5;font-size:.78rem;transition:color .2s}.nav-links a:hover{color:var(--gold2)}.nav-actions{display:flex;gap:8px;align-items:center}.lang{border:1px solid var(--line);background:transparent;color:var(--gold2);border-radius:30px;padding:7px 10px;font-size:.78rem}.menu-toggle{display:none;border:1px solid var(--line);background:transparent;color:var(--ivory);border-radius:50%;width:40px;height:40px}.hero{min-height:calc(100svh - 72px);display:grid;align-items:center;position:relative;padding:85px 0 100px;overflow:hidden}.hero:after{content:"";position:absolute;right:-8vw;top:5%;width:min(55vw,650px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(214,184,120,.12);box-shadow:0 0 0 38px rgba(214,184,120,.018),0 0 0 90px rgba(214,184,120,.018);pointer-events:none}.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:55px;align-items:center;position:relative;z-index:1}.hero h1{font:500 clamp(4rem,9vw,8.4rem)/.78 var(--serif);letter-spacing:-.045em;margin:24px 0 28px}.hero h1 span{display:block;color:var(--gold2);font-style:italic;margin-left:8%}.hero-copy{max-width:560px;color:#d2dbd2;font-size:1.02rem}.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}.hero-note{margin-top:26px;color:#aebdb1;font-size:.8rem}.hero-art{min-height:460px;position:relative;display:grid;place-items:center}.moon{width:250px;height:250px;border-radius:50%;position:relative;background:radial-gradient(circle at 36% 32%,#e8d6a4,#a88a4e 52%,#554a2d 75%);box-shadow:0 0 80px rgba(214,184,120,.13)}.moon:after{content:"";position:absolute;top:-24px;left:72px;width:230px;height:230px;border-radius:50%;background:#0b211a;box-shadow:inset -7px -2px 15px rgba(214,184,120,.05)}.arch{position:absolute;width:310px;height:400px;bottom:0;border:1px solid rgba(214,184,120,.35);border-bottom:0;border-radius:160px 160px 0 0;opacity:.7}.arch:before{content:"";position:absolute;inset:17px 17px 0;border:1px solid rgba(214,184,120,.17);border-bottom:0;border-radius:145px 145px 0 0}.hero-quote{position:absolute;bottom:10px;left:0;right:0;text-align:center;font:italic 1.45rem var(--serif);color:var(--gold2)}.intro{position:fixed;inset:0;z-index:100;background:radial-gradient(ellipse at 50% 35%,#17392b,#06130e 72%);display:grid;place-items:center;padding:24px;transition:opacity .8s,visibility .8s}.intro.hidden{opacity:0;visibility:hidden;pointer-events:none}.intro-inner{text-align:center;max-width:640px}.bismillah{font:2.4rem var(--arabic);color:var(--gold2);direction:rtl;margin-bottom:6px}.intro-translation{color:#c7d0c7;font-size:.86rem}.envelope{width:140px;height:100px;margin:42px auto 34px;position:relative;background:#d8c39a;border-radius:3px;box-shadow:0 15px 55px #0007;cursor:pointer;transform:rotate(-2deg);transition:transform .3s}.envelope:hover{transform:rotate(0) translateY(-5px)}.envelope:before{content:"";position:absolute;inset:0;background:linear-gradient(145deg,transparent 49%,#b9a477 50%),linear-gradient(215deg,transparent 49%,#c8b187 50%);border-radius:3px}.envelope:after{content:"✦";position:absolute;left:calc(50% - 16px);top:29px;width:32px;height:32px;border-radius:50%;background:#15382a;color:var(--gold2);display:grid;place-items:center;border:1px solid var(--gold)}.intro h2{font:500 clamp(2.6rem,8vw,4.7rem)/.98 var(--serif);margin:0 0 18px}.intro p{color:#d3ddd4;max-width:530px;margin:0 auto 24px}.intro small{display:block;color:#90a397;margin-top:17px}.intro .btn{justify-content:center}.intro .ornament{margin-bottom:20px}.verse-feature{padding:36px 0;background:linear-gradient(90deg,transparent,rgba(214,184,120,.055),transparent);border-block:1px solid rgba(214,184,120,.12)}.verse-feature-inner{text-align:center;max-width:900px;margin:auto}.arabic{font:2rem/1.9 var(--arabic);direction:rtl;color:var(--gold2)}.verse-translation{font:italic 1.7rem/1.35 var(--serif);max-width:760px;margin:18px auto;color:#f2e8cf}.verse-ref{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}.letter-grid{display:grid;grid-template-columns:.72fr 1.28fr;gap:60px;align-items:start}.letter-aside{position:sticky;top:110px}.letter-aside .seal{width:90px;height:90px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;font-size:2rem;color:var(--gold);margin-bottom:28px}.letter-paper{background:linear-gradient(145deg,#f2ead9,#e7dcc4);color:#233328;padding:clamp(28px,5vw,58px);position:relative;box-shadow:0 25px 90px #0003}.letter-paper:before{content:"";position:absolute;inset:12px;border:1px solid rgba(104,83,45,.2);pointer-events:none}.letter-paper p{font:1.12rem/1.9 var(--serif);position:relative}.letter-paper .letter-greeting{font:italic 2.1rem var(--serif);color:#284634}.signature{font:italic 1.9rem var(--serif);color:#315440;margin-top:30px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:42px}.glass-card{border:1px solid var(--line);background:linear-gradient(145deg,rgba(20,51,39,.75),rgba(8,26,19,.65));padding:25px;border-radius:4px;min-height:190px}.card-number{color:var(--gold);font:1.4rem var(--serif)}.glass-card h3{font:600 1.7rem var(--serif);margin:14px 0 8px}.glass-card p{color:#bdc9bf;font-size:.9rem;margin:0}.journey{background:linear-gradient(180deg,transparent,rgba(214,184,120,.035),transparent)}.timeline{position:relative;margin-top:55px}.timeline:before{content:"";position:absolute;left:18px;top:14px;bottom:14px;width:1px;background:linear-gradient(var(--gold),rgba(214,184,120,.06))}.timeline-item{display:grid;grid-template-columns:38px 1fr;gap:25px;margin-bottom:36px;position:relative}.timeline-dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--gold);background:var(--bg);margin:9px 0 0 12px;box-shadow:0 0 20px rgba(214,184,120,.15)}.timeline-content{border-bottom:1px solid var(--line);padding:0 0 28px}.timeline-content .place{font-size:.7rem;letter-spacing:.22em;color:var(--gold);text-transform:uppercase}.timeline-content h3{font:500 2.4rem var(--serif);margin:4px 0 8px}.timeline-content p{max-width:720px;color:#c8d2c9;margin:0}.dark-panel{background:linear-gradient(135deg,rgba(31,49,38,.8),rgba(10,25,18,.95));border:1px solid rgba(214,184,120,.16);padding:clamp(28px,5vw,56px);position:relative}.dark-panel:after{content:"";position:absolute;top:0;right:0;width:140px;height:140px;border-top:1px solid var(--gold);border-right:1px solid var(--gold);opacity:.3}.problem-list{display:grid;grid-template-columns:repeat(2,1fr);gap:0 30px;margin-top:25px}.problem{padding:18px 0;border-bottom:1px solid rgba(214,184,120,.15)}.problem h3{font:600 1.55rem var(--serif);margin:0 0 5px;color:var(--gold2)}.problem p{font-size:.88rem;color:#c2cec4;margin:0}.verse-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:38px}.verse-card{padding:26px;border:1px solid var(--line);background:rgba(15,39,29,.6)}.verse-card .arabic{font-size:1.75rem;margin:0 0 15px}.verse-card .meaning{font:italic 1.35rem/1.35 var(--serif);margin:12px 0}.verse-card .ref{font-size:.72rem;color:var(--gold);letter-spacing:.1em}.verse-card .context{font-size:.83rem;color:#bdc9bf}.dua-box{margin-top:22px;border-left:2px solid var(--gold);padding:8px 0 8px 22px}.dua-box h3{font:1.8rem var(--serif);margin:0 0 8px}.dua-box p{margin:6px 0;color:#c6d1c8}.future{background:linear-gradient(180deg,transparent,rgba(214,184,120,.055),transparent)}.future-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}.future-art{min-height:390px;border:1px solid var(--line);position:relative;overflow:hidden;background:radial-gradient(ellipse at 55% 65%,rgba(216,180,111,.28),transparent 30%),linear-gradient(180deg,#102b21,#071611)}.future-art:before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:#e2c88e;opacity:.8;filter:blur(.4px);right:12%;top:14%;box-shadow:0 0 90px rgba(226,200,142,.18)}.future-art:after{content:"";position:absolute;left:-10%;right:-10%;height:56%;bottom:-5%;background:linear-gradient(160deg,#183b2a,#0a1c14 65%);clip-path:polygon(0 25%,25% 10%,44% 32%,68% 8%,100% 24%,100% 100%,0 100%)}.future-caption{position:absolute;z-index:2;bottom:22px;left:24px;right:24px;font:italic 1.6rem var(--serif);color:#f1e3c2}.finale{text-align:center;padding:130px 0 115px;background:radial-gradient(ellipse at 50% 90%,rgba(193,157,91,.14),transparent 50%)}.finale .final-text{max-width:780px;margin:26px auto;color:#d1dbd2;font:1.25rem/1.9 var(--serif)}.finale .signature{color:var(--gold2);font-size:2.5rem}.footer{border-top:1px solid rgba(214,184,120,.13);padding:30px 0;color:#8e9f92;font-size:.78rem}.footer-inner{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.audio-dock{position:fixed;z-index:25;right:18px;bottom:18px;display:flex;align-items:center;gap:9px;background:rgba(7,22,17,.92);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:999px;padding:8px 12px;box-shadow:0 10px 40px #0003}.audio-dock button{border:0;background:transparent;color:var(--gold2);padding:5px 7px}.audio-label{font-size:.72rem;color:#d0d9d1}.toast{position:fixed;bottom:80px;right:20px;z-index:40;background:#e7dcc4;color:#13281c;padding:12px 18px;border-radius:8px;max-width:300px;box-shadow:0 8px 35px #0005;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}.reveal{opacity:0;transform:translateY(18px);transition:opacity .8s,transform .8s}.reveal.visible{opacity:1;transform:none}.to-top{position:fixed;bottom:80px;left:18px;z-index:15;border:1px solid var(--line);background:#0b211a;color:var(--gold2);width:42px;height:42px;border-radius:50%;display:none}.to-top.show{display:block}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:900px){.nav-links{gap:12px}.nav-links a{font-size:.72rem}.hero-grid{grid-template-columns:1fr .7fr;gap:20px}.hero-art{min-height:360px}.moon{width:180px;height:180px}.moon:after{width:165px;height:165px;left:54px;top:-17px}.arch{width:230px;height:320px}.letter-grid{gap:28px}.cards{grid-template-columns:1fr 1fr}.future-grid{gap:28px}}
+@media(max-width:700px){.container{width:min(100% - 30px,560px)}.section{padding:76px 0}.nav-inner{min-height:64px}.menu-toggle{display:block}.nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:rgba(7,22,17,.98);padding:16px 22px 24px;border-bottom:1px solid var(--line);flex-direction:column;align-items:flex-start}.nav-links.open{display:flex}.nav-links a{font-size:.88rem;padding:6px 0}.brand-name{font-size:1rem}.hero{padding:60px 0 50px;min-height:auto}.hero-grid{grid-template-columns:1fr}.hero h1{font-size:clamp(4rem,16vw,6rem)}.hero-art{min-height:300px;grid-row:1}.moon{width:150px;height:150px}.moon:after{width:140px;height:140px;left:45px;top:-12px}.arch{height:280px;width:210px}.hero-quote{font-size:1.15rem}.hero-copy{font-size:.95rem}.letter-grid{grid-template-columns:1fr}.letter-aside{position:static}.letter-aside .seal{width:62px;height:62px;font-size:1.5rem;margin-bottom:16px}.letter-paper{padding:28px 24px}.letter-paper p{font-size:1.05rem}.cards{grid-template-columns:1fr}.glass-card{min-height:0}.verse-grid{grid-template-columns:1fr}.problem-list{grid-template-columns:1fr}.future-grid{grid-template-columns:1fr}.future-art{min-height:300px;order:2}.finale{padding:90px 0}.arabic{font-size:1.7rem}.verse-translation{font-size:1.45rem}.audio-dock{right:10px;bottom:10px}.audio-label{max-width:100px;line-height:1.2}.to-top{bottom:70px;left:10px}.footer-inner{flex-direction:column;gap:8px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
 </head>
 <body>
+<div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="introTitle">
+  <div class="intro-inner">
+    <div class="ornament">ЛИЧНОЕ ПИСЬМО · ОТ ФАЙЗАЛИ</div>
+    <div class="bismillah" lang="ar" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+    <div class="intro-translation">Во имя Аллаха, Милостивого, Милосердного</div>
+    <button class="envelope" id="envelope" aria-label="Открыть письмо"></button>
+    <h2 id="introTitle">Тахмина,<br><em class="gold">это письмо для тебя.</em></h2>
+    <p>От Файзали — о любви, вере, жизненном пути и надежде на будущее, если Аллах пожелает.</p>
+    <button class="btn primary" id="openLetter">Открыть моё письмо <span aria-hidden="true">↗</span></button>
+    <small>Можно читать в тишине. Звук не включается автоматически.</small>
+  </div>
+</div>
 
-    <canvas id="bg-canvas"></canvas>
+<header class="nav">
+ <div class="container nav-inner">
+  <a class="brand" href="#home" aria-label="На главную"><span class="brand-mark">☾</span><span class="brand-name">Файзали <span class="gold">&</span> Тахмина</span></a>
+  <nav class="nav-links" id="navLinks" aria-label="Главная навигация">
+   <a href="#letter">Письмо</a><a href="#faith">Вера и любовь</a><a href="#journey">Мой путь</a><a href="#hardship">Трудности</a><a href="#dua">Аяты и дуа</a><a href="#future">Будущее</a>
+  </nav>
+  <div class="nav-actions"><button class="lang" id="langToggle" aria-label="Переключить язык">TJ / RU</button><button class="btn small" id="reopenLetter">Письмо ↗</button><button class="menu-toggle" id="menuToggle" aria-label="Открыть меню" aria-expanded="false">☰</button></div>
+ </div>
+</header>
 
-    <button class="music-btn" onclick="toggleMusic()">
-        <span id="musicIcon">🎵</span> <span id="musicText">Включить музыку</span>
-    </button>
+<main>
+<section class="hero" id="home">
+ <div class="container hero-grid">
+  <div class="hero-copy-wrap reveal">
+   <div class="section-kicker">Бисмиллях · История, написанная сердцем</div>
+   <h1>Не просто<br><span>любовь.</span></h1>
+   <p class="hero-copy" data-ru="Это история Файзали — о вере в Аллаха, о девушке, которую он любит, о дороге через три страны и о трудностях, которые он учится преодолевать." data-tj="Ин қиссаи Файзалӣ аст — дар бораи имон ба Аллоҳ, духтаре, ки дӯсташ медорад, роҳи зиндагӣ аз се кишвар ва душвориҳое, ки ӯ кӯшиш мекунад паси сар кунад.">Это история Файзали — о вере в Аллаха, о девушке, которую он любит, о дороге через три страны и о трудностях, которые он учится преодолевать.</p>
+   <div class="hero-actions"><a class="btn primary" href="#letter" data-ru="Прочитать письмо" data-tj="Номаро хондан">Прочитать письмо</a><a class="btn" href="#journey" data-ru="Моя история ↓" data-tj="Қиссаи ман ↓">Моя история ↓</a></div>
+   <p class="hero-note">Для Тахмины — моей будущей жены, если на то будет воля Аллаха, иншаАллах.</p>
+  </div>
+  <div class="hero-art reveal" aria-hidden="true"><div class="moon"></div><div class="arch"></div><div class="hero-quote">«Любовь — это также милосердие»</div></div>
+ </div>
+</section>
 
-    <!-- 1. LOADING SCREEN -->
-    <div id="loader">
-        <div class="loader-subtitle">Для одной особенной девушки…</div>
-        <div class="loader-title">Тахмина ❤️</div>
-        <button class="btn-main" onclick="openHeart()">Открыть моё сердце</button>
-    </div>
+<section class="verse-feature">
+ <div class="container verse-feature-inner reveal">
+  <div class="arabic" lang="ar">وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنْفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً</div>
+  <p class="verse-translation">«И из Его знамений — то, что Он сотворил для вас супругов из вас самих, чтобы вы находили в них покой, и установил между вами любовь и милосердие».</p>
+  <div class="verse-ref">Коран · Сура «Ар-Рум» · 30:21 · Перевод по смыслу</div>
+ </div>
+</section>
 
-    <!-- MAIN CONTENT -->
-    <div id="main-content" style="display: none;">
+<section class="section" id="letter">
+ <div class="container letter-grid">
+  <aside class="letter-aside reveal"><div class="seal">✦</div><div class="section-kicker">Глава первая</div><h2 class="section-title">Тебе,<br><em class="gold">Тахмина.</em></h2><p class="muted">Не идеальные слова. Не обещание лёгкой жизни. Просто то, что я хочу сказать тебе искренне.</p><div class="rule"></div><button class="btn small" id="readAgain">Перечитать письмо ↗</button></aside>
+  <article class="letter-paper reveal" id="letterPaper">
+   <p class="letter-greeting">Ассаляму алейкум, Тахмина.</p>
+   <p>Я создал это письмо, чтобы ты увидела не только мои слова о любви, но и человека, который стоит за ними. Я хочу рассказать тебе о своей вере, о мечтах, о жизни и о трудностях, которые не всегда видно со стороны.</p>
+   <p>Я не идеален. Мне ещё многому нужно научиться, многое исправить в себе и многое построить. Иногда я не знаю, каким будет завтрашний день. Но я хочу работать над собой, принимать ответственность за свои решения и не останавливаться на том, что имею сегодня.</p>
+   <p>Ты дорога мне. Я представляю тебя частью своего будущего и надеюсь однажды, если Аллах пожелает, назвать тебя своей женой. Я понимаю, что любовь — это не только красивые признания. Это уважение, честность, умение слушать, признавать ошибки и беречь доверие.</p>
+   <p>Я не хочу обещать тебе жизнь без трудностей. Я хочу учиться встречать трудности достойно, быть надёжнее в своих поступках и не заставлять тебя отвечать на мои чувства только потому, что они сильны. Твои чувства и твой выбор заслуживают уважения.</p>
+   <p>Я прошу Аллаха направлять меня к благому, укреплять мою веру, помогать исправлять ошибки и даровать благо нам обоим. Если нам суждено создать семью, пусть она будет основана на милосердии, взаимном уважении, искренности и дозволенном пути.</p>
+   <p>Моя жизнь ещё строится. Я не достиг всего, о чём мечтаю. Но я хочу двигаться вперёд, помогать своей семье, развиваться и стать человеком, которым смогу гордиться не только по достижениям, но и по характеру.</p>
+   <p>Тахмина, это письмо не требует от тебя ответа и не обещает, что всё будет просто. Оно лишь открывает тебе часть моего сердца — с надеждой, уважением и намерением становиться лучше.</p>
+   <div class="signature">С любовью, Файзали.</div>
+   <p><strong>Для Тахмины — моей будущей жены, если на то будет воля Аллаха.</strong></p>
+  </article>
+ </div>
+</section>
 
-        <!-- 2. HERO -->
-        <section class="hero">
-            <div class="container">
-                <h1 class="reveal">Тахмина, я тебя люблю.</h1>
-                <p class="reveal">И сегодня я хочу сказать тебе то, что иногда мне сложно сказать словами.</p>
-                <a href="#letter" class="btn-main reveal">Прочитать моё письмо ↓</a>
-            </div>
-        </section>
+<section class="section" id="faith">
+ <div class="container">
+  <div class="reveal"><div class="section-kicker">Глава вторая · Вера и намерение</div><h2 class="section-title">Любовь, в которой<br><em class="gold">есть милосердие.</em></h2><p class="section-lead">Для меня вера не должна быть украшением красивого сайта. Она напоминает мне, каким человеком я хочу быть: честным, терпеливым, благодарным и ответственным. Любовь не даёт права владеть другим человеком — она учит уважать его.</p></div>
+  <div class="cards">
+   <article class="glass-card reveal"><div class="card-number">01 / النية</div><h3>Чистое намерение</h3><p>Не использовать чувства ради контроля, а стремиться к добру, честности и достойному пути.</p></article>
+   <article class="glass-card reveal"><div class="card-number">02 / الصبر</div><h3>Терпение</h3><p>Не требовать мгновенных ответов от жизни и учиться сохранять уважение в непростые моменты.</p></article>
+   <article class="glass-card reveal"><div class="card-number">03 / الرحمة</div><h3>Милосердие</h3><p>Уметь слышать другого человека, признавать свои ошибки и подтверждать слова поступками.</p></article>
+  </div>
+ </div>
+</section>
 
-        <div class="main-motto reveal">
-            «Расстояние между нами — это всего лишь расстояние. Моё сердце всё равно рядом с тобой.»
-        </div>
+<section class="section journey" id="journey">
+ <div class="container">
+  <div class="reveal"><div class="section-kicker">Глава третья · Моя дорога</div><h2 class="section-title">Таджикистан <span class="gold">→</span><br>Россия <span class="gold">→</span> Казахстан.</h2><p class="section-lead">Три страны, разные этапы жизни и один путь, который всё ещё продолжается. Это не история о том, что я уже всего добился. Это история о том, как я учусь идти дальше.</p></div>
+  <div class="timeline">
+   <article class="timeline-item reveal"><div class="timeline-dot"></div><div class="timeline-content"><div class="place">Глава 01 · Мои корни</div><h3>Таджикистан</h3><p>Моя родина, мои корни и семья. Место, с которого начался мой путь и куда мысленно возвращаюсь, когда думаю о том, ради чего стараюсь.</p></div></article>
+   <article class="timeline-item reveal"><div class="timeline-dot"></div><div class="timeline-content"><div class="place">Глава 02 · Самостоятельность</div><h3>Россия</h3><p>Жизнь вдали от дома, новые обстоятельства, работа и опыт, который заставляет взрослеть. Не всё бывает просто, но каждый этап чему-то учит.</p></div></article>
+   <article class="timeline-item reveal"><div class="timeline-dot"></div><div class="timeline-content"><div class="place">Глава 03 · Новая глава</div><h3>Казахстан</h3><p>Работа, ежедневные расходы, ответственность и планы на будущее. Я продолжаю искать возможности, учиться и постепенно строить фундамент для лучшей жизни.</p></div></article>
+  </div>
+ </div>
+</section>
 
-        <div class="container">
+<section class="section" id="hardship">
+ <div class="container">
+  <div class="dark-panel reveal">
+   <div class="section-kicker">Глава четвёртая · То, о чём я не всегда говорю</div>
+   <h2 class="section-title">Мои трудности —<br><em class="gold">часть моей истории.</em></h2>
+   <p class="section-lead">Я рассказываю об этом не ради жалости. Я хочу быть честным: за мечтами есть повседневная жизнь, ответственность и задачи, которые нельзя решить одним красивым обещанием.</p>
+   <div class="problem-list">
+    <div class="problem"><h3>Расстояние от семьи</h3><p>Я живу и работаю вдали от родных. Самостоятельность даёт опыт, но напоминает, как важны близкие.</p></div>
+    <div class="problem"><h3>Деньги и расходы</h3><p>Нужно распределять ограниченный заработок, думать о повседневных потребностях и по возможности поддерживать семью.</p></div>
+    <div class="problem"><h3>Неопределённость</h3><p>Не все решения очевидны, и не каждое усилие сразу приносит результат. Мне нужно учиться планировать и проверять свои шаги.</p></div>
+    <div class="problem"><h3>Ошибки и рост</h3><p>Я ещё многому учусь. Важно не прятаться за оправданиями, а замечать ошибки и менять то, что зависит от меня.</p></div>
+    <div class="problem"><h3>Большие цели</h3><p>Я хочу развиваться, получать знания, создавать возможности и не путать быстрый результат с настоящим прогрессом.</p></div>
+    <div class="problem"><h3>Надежда</h3><p>Мои сегодняшние обстоятельства — не вся моя жизнь. Я хочу продолжать действовать, просить у Аллаха наставления и делать свою часть работы.</p></div>
+   </div>
+   <div class="rule"></div>
+   <p class="serif" style="font-size:1.5rem;color:var(--gold2);margin-bottom:0">«Я ещё не там, где хочу быть. Но я могу честно работать над тем, куда иду».</p>
+  </div>
+ </div>
+</section>
 
-            <!-- 3. LETTER -->
-            <section id="letter" class="glass-card reveal">
-                <h2 class="section-title">Моё письмо тебе</h2>
-                <div style="font-size: 1.02rem; color: #e2d9e6;">
-                    <p>Тахмина…</p><br>
-                    <p>Если ты сейчас читаешь это, значит, я наконец смог собрать свои мысли в одном месте.</p><br>
-                    <p>Я хочу сказать тебе самое простое и самое важное:</p>
-                    
-                    <div style="font-family: var(--font-title); font-size: 1.8rem; color: var(--primary-red); text-align: center; margin: 20px 0; font-weight: 600;">
-                        Я тебя люблю. Очень.
-                    </div>
+<section class="section" id="dua">
+ <div class="container">
+  <div class="reveal"><div class="section-kicker">Глава пятая · Сабр, дуа и надежда</div><h2 class="section-title">Когда сердце ищет<br><em class="gold">опору у Аллаха.</em></h2><p class="section-lead">Ни один аят не является гарантией определённого романтического исхода. Эти слова напоминают о терпении, молитве, милосердии и надежде — независимо от того, как сложится будущее.</p></div>
+  <div class="verse-grid">
+   <article class="verse-card reveal"><div class="arabic" lang="ar">فَإِنَّ مَعَ الْعُسْرِ يُسْرًا ۝ إِنَّ مَعَ الْعُسْرِ يُسْرًا</div><div class="meaning">«Поистине, за тягостью наступает облегчение. Поистине, за тягостью наступает облегчение».</div><div class="ref">Коран · 94:5–6 · Сура «Аш-Шарх»</div><p class="context">Напоминание не терять надежду в трудные периоды. Перевод приведён по смыслу.</p></article>
+   <article class="verse-card reveal"><div class="arabic" lang="ar">أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ</div><div class="meaning">«Разве не поминанием Аллаха утешаются сердца?»</div><div class="ref">Коран · 13:28 · Сура «Ар-Ра‘д»</div><p class="context">О спокойствии сердца через поминание Аллаха. Перевод приведён по смыслу.</p></article>
+   <article class="verse-card reveal"><div class="arabic" lang="ar">يَا أَيُّهَا الَّذِينَ آمَنُوا اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ ۚ إِنَّ اللَّهَ مَعَ الصَّابِرِينَ</div><div class="meaning">«О те, которые уверовали! Обратитесь за помощью к терпению и молитве. Воистину, Аллах — с терпеливыми».</div><div class="ref">Коран · 2:153 · Сура «Аль-Бакара»</div><p class="context">Напоминание о терпении и молитве во время испытаний. Перевод приведён по смыслу.</p></article>
+   <article class="verse-card reveal"><div class="arabic" lang="ar">وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ</div><div class="meaning">«Тому, кто уповает на Аллаха, Его достаточно».</div><div class="ref">Коран · 65:3 · Сура «Ат-Талак»</div><p class="context">Упование не отменяет усилий и ответственности. Перевод приведён по смыслу.</p></article>
+  </div>
+  <div class="dua-box reveal"><h3>Дуа о семье и благом будущем</h3><div class="arabic" lang="ar">رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ وَاجْعَلْنَا لِلْمُتَّقِينَ إِمَامًا</div><p><strong>Смысл:</strong> «Господь наш! Даруй нам в наших супругах и потомстве отраду для глаз и сделай нас примером для богобоязненных».</p><p class="muted">Коран · 25:74 · Сура «Аль-Фуркан». Это мольба о благой семье, а не обещание определённого исхода.</p></div>
+  <div class="dua-box reveal"><h3>Моё личное обращение</h3><p>О Аллах, направь меня к тому, что является благом, помоги исправлять ошибки, укрепи мою веру, благослови мой труд и научи меня поступать честно и с милосердием. Даруй моей семье благополучие и приведи нас к тому, что лучше для нас.</p><p class="muted">Авторская личная мольба, не цитата из Корана или хадиса.</p></div>
+  <div class="rule"></div><p class="muted" style="font-size:.8rem">Аяты приведены с номерами сур и аятов; русский текст — перевод по смыслу. Для религиозных решений обращайся к надёжным исламским источникам и знающим людям.</p>
+ </div>
+</section>
 
-                    <p>Ты стала для меня человеком, который занимает особенное место в моём сердце.</p><br>
-                    <p>Мне нравится думать о тебе, разговаривать с тобой, мечтать о нашем будущем и представлять тот день, когда расстояние между нами больше не будет иметь значения.</p>
+<section class="section" id="future">
+ <div class="container future-grid">
+  <div class="reveal"><div class="section-kicker">Глава шестая · Мечта, а не обещание</div><h2 class="section-title">Будущее,<br><em class="gold">если Аллах пожелает.</em></h2><p class="section-lead">Я мечтаю о спокойной семье, в которой есть вера, уважение, разговоры без страха, поддержка в сложные дни и благодарность за простые вещи.</p><p>Я представляю уютный дом, две чашки чая у окна, совместные прогулки и возможность быть рядом. Но это пока мечта, а не воспоминание и не обещание, что всё обязательно произойдёт именно так.</p><p>Я хочу идти к своему будущему честно: трудиться, учиться, отвечать за свои решения и уважать чувства Тахмины. Если нам суждено создать семью, пусть это будет благом для нас обоих.</p><a class="btn" href="#finale">К последней главе ↓</a></div>
+  <div class="future-art reveal" aria-label="Символический рассвет и надежда на будущее"><div class="future-caption">Дом, в котором есть покой, уважение и милосердие.</div></div>
+ </div>
+</section>
 
-                    <!-- INTERACTIVE PHOTO CARD 1 -->
-                    <div class="photo-card" onclick="document.getElementById('file1').click()">
-                        <input type="file" id="file1" accept="image/*" style="display:none;" onchange="loadPhoto(event, 'img1')">
-                        <img id="img1" src="" style="display:none;">
-                        <div class="photo-card-content" id="phContent1">
-                            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                            <div style="color: #fff; font-weight: 600; font-size: 0.95rem;">Наша фотография ❤️</div>
-                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">(Нажмите, чтобы выбрать фото с телефона)</div>
-                        </div>
-                    </div>
+<section class="finale" id="finale">
+ <div class="container reveal">
+  <div class="section-kicker">Последняя глава · История продолжается</div>
+  <h2 class="section-title">Я всё ещё<br><em class="gold">в пути.</em></h2>
+  <p class="final-text">Я — Файзали. Мой путь начался в Таджикистане, продолжился в России и привёл меня в Казахстан. Я всё ещё учусь жить самостоятельно, трудиться, принимать решения и понимать, каким человеком хочу стать.</p>
+  <p class="final-text">У меня есть цели, которые ещё не достигнуты. Есть трудности, которые требуют терпения. Я хочу помогать своей семье, развиваться и строить достойное будущее — не забывая о вере, характере и отношении к людям.</p>
+  <p class="final-text">Тахмина, я люблю тебя и надеюсь однажды назвать тебя своей женой, если Аллах пожелает этого для нас. Я не могу обещать, что всё будет легко. Но я хочу, чтобы мои слова постепенно становились поступками, а моя жизнь — доказательством того, что я стараюсь расти и нести ответственность.</p>
+  <p class="final-text">Пусть Аллах направит нас к тому, что является благом, поможет нам принимать правильные решения и дарует спокойствие сердцам.</p>
+  <div class="signature">С любовью, Файзали.</div>
+  <p class="muted">Для Тахмины — моей будущей жены, иншаАллах.</p>
+  <button class="btn primary" id="backToLetter">Прочитать письмо ещё раз ↗</button>
+ </div>
+</section>
+</main>
 
-                    <p>Ты не идеальная. Я тоже не идеальный.</p><br>
-                    <p>Но именно поэтому наши отношения для меня настоящие.</p><br>
-                    <p>Я знаю, что совершал ошибки.<br>
-                    Иногда мог сказать что-то не так.<br>
-                    Иногда мог поступить неправильно.<br>
-                    Иногда мог сделать тебе больно.</p><br>
-                    
-                    <p style="text-align: center; font-weight: 600; color: var(--accent-pink);">
-                        И за это я хочу сказать тебе:<br>
-                        <span style="font-size: 1.4rem; color: var(--primary-red);">Прости меня, Тахмина. ❤️</span>
-                    </p><br>
-                    <p>Я не хочу обещать тебе, что никогда больше не ошибусь.</p>
-                    <p>Я хочу обещать другое: <strong>что буду учиться быть лучше для тебя.</strong></p>
-                </div>
-            </section>
-
-            <!-- 4. DISTANCE -->
-            <section class="glass-card reveal">
-                <h2 class="section-title">Нас разделяет расстояние</h2>
-                
-                <div class="distance-container">
-                    <div class="person-card">Файзали ❤️</div>
-                    <div class="distance-line-wrap">
-                        <div class="moving-heart">❤️</div>
-                    </div>
-                    <div class="person-card">Тахмина ❤️</div>
-                </div>
-
-                <p style="text-align: center;">Сейчас между нами расстояние.<br>Но я не считаю километры причиной отказаться от нас.</p>
-
-                <div class="distance-quote">
-                    <strong>«Пусть между нами города и километры. Я всё равно чувствую тебя близко. Для меня настоящая любовь — это не только быть рядом, когда всё легко. Это оставаться рядом сердцем даже тогда, когда физически мы далеко.»</strong>
-                </div>
-
-                <p style="text-align: center; font-size: 1.2rem; font-weight: 600; color: var(--accent-pink);">
-                    Мы справимся. ❤️
-                </p>
-            </section>
-
-            <!-- 5. TIMELINE -->
-            <section class="glass-card reveal">
-                <h2 class="section-title">Наша история ещё не закончена</h2>
-                
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-content">❤️ Мы встретились</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-content">❤️ Мы начали становиться ближе</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-content">❤️ Были счастливые моменты</div>
-                    </div>
-
-                    <!-- INTERACTIVE PHOTO CARD 2 -->
-                    <div class="photo-card" style="height: 200px;" onclick="document.getElementById('file2').click()">
-                        <input type="file" id="file2" accept="image/*" style="display:none;" onchange="loadPhoto(event, 'img2')">
-                        <img id="img2" src="" style="display:none;">
-                        <div class="photo-card-content" id="phContent2">
-                            <div style="color: #fff; font-weight: 600; font-size: 0.9rem;">✨ Наше воспоминание</div>
-                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">(Нажмите, чтобы добавить фото)</div>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-content">💔 Были ошибки и трудности</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-content">🌍 Появилось расстояние</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-content">🤝 Но мы всё ещё здесь</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot" style="background: #fff; box-shadow: 0 0 12px #fff;"></div>
-                        <div class="timeline-content" style="border-color: var(--primary-red); font-weight: 600;">💍 А дальше — наше будущее</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 6. FORGIVENESS -->
-            <section class="glass-card reveal" style="text-align: center;">
-                <h2 class="section-title">Тахмина, прости меня…</h2>
-                <p>Я знаю, что одних слов недостаточно.</p><br>
-                <p>Поэтому я не хочу просто говорить “прости”.</p><br>
-                <p>Я хочу доказать тебе своими поступками, что могу стать лучше.</p><br>
-                <p>Я хочу, чтобы рядом со мной ты чувствовала любовь, уважение, спокойствие и уверенность.</p><br>
-                <p>Я не могу стереть прошлые ошибки. Но я могу сделать всё, чтобы наше будущее было другим.</p>
-                
-                <div style="font-size: 1.2rem; margin-top: 25px; color: var(--accent-pink); font-weight: 600;">
-                    Я действительно дорожу тобой. ❤️
-                </div>
-            </section>
-
-            <!-- 7. FUTURE -->
-            <section class="glass-card reveal">
-                <div style="text-align: center; font-size: 3.5rem; margin-bottom: 10px;">💖</div>
-                <h2 class="section-title">Я хочу наше будущее</h2>
-                <p>Я хочу однажды перестать считать километры.</p>
-                <p>Хочу увидеть тебя рядом.</p>
-                <p>Хочу вместе гулять, смеяться, спорить из-за мелочей и снова мириться.</p>
-                <p>Хочу поддерживать тебя, когда тебе тяжело.</p>
-                <p>Хочу радоваться твоим успехам.</p>
-                <p>Хочу строить вместе с тобой нашу жизнь.</p>
-                <p>И я мечтаю о том дне, когда мы станем семьёй.</p>
-                <p>Когда всё, через что мы прошли, останется позади.</p>
-                <p style="text-align: center; margin-top: 20px; font-size: 1.2rem;">
-                    И мы посмотрим друг на друга и скажем: <br>
-                    <strong style="font-size: 1.5rem; color: var(--primary-red);">“Мы смогли.” ❤️</strong>
-                </p>
-            </section>
-
-            <!-- 8. PROMISES -->
-            <section class="glass-card reveal">
-                <h2 class="section-title">Моё обещание тебе</h2>
-                <div class="promise-item">
-                    <div class="promise-title">Я не обещаю идеальную жизнь.</div>
-                    <div>Я обещаю стараться.</div>
-                </div>
-                <div class="promise-item">
-                    <div class="promise-title">Не обещаю, что никогда не будет трудностей.</div>
-                    <div>Я обещаю не убегать от них.</div>
-                </div>
-                <div class="promise-item">
-                    <div class="promise-title">Не обещаю, что никогда не ошибусь.</div>
-                    <div>Я обещаю признавать свои ошибки и исправляться.</div>
-                </div>
-                <div class="promise-item" style="border-color: var(--primary-red);">
-                    <div class="promise-title" style="color: var(--primary-red);">И самое главное…</div>
-                    <div><strong>Я обещаю помнить, почему я выбрал именно тебя.</strong></div>
-                </div>
-            </section>
-
-            <!-- 9. INTERACTIVE HEART -->
-            <section class="glass-card interactive-heart-box reveal">
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px;">Нажми на сердце</p>
-                <div class="big-heart-btn" onclick="triggerHeartBurst(event)">❤️</div>
-                <div class="heart-reveal-msg" id="heartMsg">
-                    Вот примерно так моё сердце чувствует себя, когда думает о тебе. ❤️
-                </div>
-            </section>
-
-        </div>
-
-        <!-- 10. FINALE -->
-        <section class="finale-section" id="finale">
-            <div class="container">
-                <div class="finale-line" id="f1">Тахмина…</div>
-                <div class="finale-line" id="f2">Я тебя люблю.</div>
-                <div class="finale-line" id="f3">И я не хочу, чтобы наша история закончилась здесь.</div>
-                <div class="finale-line" id="f4" style="font-size: 4.5rem; margin: 15px 0;">❤️</div>
-                <div class="finale-line" id="f5">Я хочу пройти этот путь вместе с тобой.</div>
-                <div class="finale-line" id="f6">Через расстояние.</div>
-                <div class="finale-line" id="f7">Через трудности.</div>
-                <div class="finale-line" id="f8">Через ошибки.</div>
-                <div class="finale-line" id="f9">Через всё.</div>
-                <div class="finale-line finale-bold" id="f10">
-                    «Пока однажды мы не посмотрим назад и не скажем:<br>“Мы смогли.” ❤️»
-                </div>
-                <div class="finale-line" id="f11" style="font-family: var(--font-title); font-size: 1.5rem; color: var(--accent-pink); margin-top: 25px;">
-                    С любовью, Файзали.
-                </div>
-            </div>
-        </section>
-
-        <footer>
-            <div class="container">
-                <button class="btn-main" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" style="margin-bottom: 25px; font-size: 0.85rem; padding: 10px 24px;">
-                    Посмотреть ещё раз ❤️
-                </button>
-                <p style="font-family: var(--font-title); font-size: 1.3rem; color: var(--accent-pink);">Файзали × Тахмина</p>
-                <p style="opacity: 0.6; font-size: 0.75rem; margin-top: 8px;">Создано с любовью специально для Тахмины ❤️</p>
-            </div>
-        </footer>
-
-    </div>
-
-    <script>
-        /* Background Canvas */
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        let width = canvas.width = window.innerWidth;
-        let height = canvas.height = window.innerHeight;
-
-        window.addEventListener('resize', () => {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        });
-
-        class Star {
-            constructor() { this.reset(); }
-            reset() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.size = Math.random() * 2;
-                this.alpha = Math.random();
-                this.speed = Math.random() * 0.008 + 0.002;
-            }
-            update() {
-                this.alpha += this.speed;
-                if (this.alpha > 1 || this.alpha < 0) this.speed = -this.speed;
-            }
-            draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(this.alpha)})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-        const stars = Array.from({ length: 90 }, () => new Star());
-        function animateCanvas() {
-            ctx.clearRect(0, 0, width, height);
-            stars.forEach(s => { s.update(); s.draw(); });
-            requestAnimationFrame(animateCanvas);
-        }
-        animateCanvas();
-
-        /* Loader & Scroll */
-        function openHeart() {
-            document.getElementById('loader').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
-                initObserver();
-            }, 1000);
-            if(!isAudioPlaying) toggleMusic();
-        }
-
-        function initObserver() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); });
-            }, { threshold: 0.1 });
-            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-            const finaleObserver = new IntersectionObserver((entries) => {
-                if (entries[0].isIntersecting) triggerFinale();
-            }, { threshold: 0.2 });
-            finaleObserver.observe(document.getElementById('finale'));
-        }
-
-        let finaleDone = false;
-        function triggerFinale() {
-            if (finaleDone) return;
-            finaleDone = true;
-            const ids = ['f1','f2','f3','f4','f5','f6','f7','f8','f9','f10','f11'];
-            ids.forEach((id, i) => {
-                setTimeout(() => {
-                    const el = document.getElementById(id);
-                    if(el) el.classList.add('visible');
-                }, i * 1100);
-            });
-        }
-
-        function triggerHeartBurst(e) {
-            document.getElementById('heartMsg').classList.add('show');
-            const syms = ['❤️', '💖', '✨', '🌸'];
-            for (let i = 0; i < 20; i++) {
-                const h = document.createElement('div');
-                h.className = 'floating-heart';
-                h.innerText = syms[Math.floor(Math.random() * syms.length)];
-                h.style.left = `${e.clientX + (Math.random() - 0.5) * 160}px`;
-                h.style.top = `${e.clientY + (Math.random() - 0.5) * 80}px`;
-                h.style.fontSize = `${Math.random() * 1.2 + 1}rem`;
-                document.body.appendChild(h);
-                setTimeout(() => h.remove(), 2500);
-            }
-        }
-
-        /* Photo Loader from Phone */
-        function loadPhoto(event, imgId) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.getElementById(imgId);
-                    img.src = e.target.result;
-                    img.style.display = 'block';
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-
-        /* Music Synth */
-        let audioCtx, isAudioPlaying = false, oscs = [];
-        function toggleMusic() {
-            const txt = document.getElementById('musicText');
-            if (!isAudioPlaying) {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                
-                const freqs = [174.61, 220.00, 261.63, 329.63];
-                const gain = audioCtx.createGain();
-                gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
-                gain.connect(audioCtx.destination);
-
-                oscs = freqs.map(f => {
-                    const o = audioCtx.createOscillator();
-                    o.type = 'sine';
-                    o.frequency.setValueAtTime(f, audioCtx.currentTime);
-                    o.connect(gain);
-                    o.start();
-                    return o;
-                });
-                isAudioPlaying = true;
-                txt.innerText = "Пауза";
-            } else {
-                oscs.forEach(o => o.stop());
-                oscs = [];
-                isAudioPlaying = false;
-                txt.innerText = "Включить музыку";
-            }
-        }
-    </script>
+<footer class="footer"><div class="container footer-inner"><span>© JABORZODA FAYZALI · Личное письмо для Тахмины</span><span>С уважением к вере, искренности и свободе выбора.</span><a href="#home">Наверх ↑</a></div></footer>
+<div class="audio-dock" aria-label="Аудиопанель"><button id="quranBtn" title="Включить чтение Корана" aria-label="Включить чтение Корана">▶</button><span class="audio-label" id="audioLabel">Аят 94:5 · чтение Корана</span><button id="audioStop" title="Остановить звук" aria-label="Остановить звук">■</button></div>
+<audio id="quranAudio" preload="none" src="https://everyayah.com/data/Alafasy_128kbps/094005.mp3"></audio>
+<button class="to-top" id="toTop" aria-label="Наверх">↑</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+ const intro=document.getElementById('intro'), openBtn=document.getElementById('openLetter'), envelope=document.getElementById('envelope');
+ function openSite(){intro.classList.add('hidden');document.body.style.overflow='';}
+ openBtn.addEventListener('click',openSite);envelope.addEventListener('click',openSite);
+ document.body.style.overflow='hidden';
+ document.getElementById('reopenLetter').addEventListener('click',()=>{intro.classList.remove('hidden');document.body.style.overflow='hidden';});
+ document.getElementById('readAgain').addEventListener('click',()=>document.getElementById('letterPaper').scrollIntoView({behavior:'smooth',block:'center'}));
+ document.getElementById('backToLetter').addEventListener('click',()=>{document.getElementById('letter').scrollIntoView({behavior:'smooth'});});
+ const menu=document.getElementById('navLinks'),menuToggle=document.getElementById('menuToggle');
+ menuToggle.addEventListener('click',()=>{const isOpen=menu.classList.toggle('open');menuToggle.setAttribute('aria-expanded',String(isOpen));menuToggle.textContent=isOpen?'×':'☰';});
+ menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{menu.classList.remove('open');menuToggle.setAttribute('aria-expanded','false');menuToggle.textContent='☰';}));
+ const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}}),{threshold:.08});
+ document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+ const topBtn=document.getElementById('toTop');window.addEventListener('scroll',()=>topBtn.classList.toggle('show',window.scrollY>500),{passive:true});topBtn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+ const toast=document.getElementById('toast');let toastTimer;function notify(message){toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),3600);}
+ const audio=document.getElementById('quranAudio'),quranBtn=document.getElementById('quranBtn'),audioStop=document.getElementById('audioStop'),audioLabel=document.getElementById('audioLabel');
+ quranBtn.addEventListener('click',async()=>{if(!audio.paused){audio.pause();quranBtn.textContent='▶';audioLabel.textContent='Чтение Корана · пауза';return;}try{await audio.play();quranBtn.textContent='Ⅱ';audioLabel.textContent='Коран 94:5 · аль-Афаси';}catch(e){notify('Не удалось загрузить аудио. Проверь подключение к интернету.');}});
+ audioStop.addEventListener('click',()=>{audio.pause();audio.currentTime=0;quranBtn.textContent='▶';audioLabel.textContent='Аят 94:5 · чтение Корана';});
+ audio.addEventListener('ended',()=>{quranBtn.textContent='▶';audioLabel.textContent='Аят 94:5 · чтение Корана';});
+ audio.addEventListener('error',()=>{audioLabel.textContent='Аудио временно недоступно';});
+ const translations={
+  'Письмо':'Нома','Вера и любовь':'Имон ва муҳаббат','Мой путь':'Роҳи ман','Трудности':'Душвориҳо','Аяты и дуа':'Оятҳо ва дуо','Будущее':'Оянда',
+  'Прочитать письмо':'Номаро хондан','Моя история ↓':'Қиссаи ман ↓','Открыть моё письмо':'Номаи маро кушоед','Перечитать письмо ↗':'Номаро аз нав хондан ↗',
+  'Не просто':'На танҳо','любовь.':'муҳаббат.','Глава первая':'Боби аввал','Глава вторая · Вера и намерение':'Боби дуюм · Имон ва ният',
+  'Таджикистан':'Тоҷикистон','Россия':'Русия','Казахстан':'Қазоқистон','Мои трудности —':'Душвориҳои ман —','часть моей истории.':'қисми қиссаи ман.','Я всё ещё':'Ман ҳанӯз','в пути.':'дар роҳ ҳастам.'
+ };
+ let isTajik=false;
+ document.getElementById('langToggle').addEventListener('click',()=>{
+  isTajik=!isTajik;document.documentElement.lang=isTajik?'tg':'ru';document.getElementById('langToggle').textContent=isTajik?'RU / TJ':'TJ / RU';
+  document.querySelectorAll('[data-ru][data-tj]').forEach(el=>{el.textContent=isTajik?el.dataset.tj:el.dataset.ru;});
+  document.querySelectorAll('.nav-links a').forEach(a=>{const original=a.dataset.original||(a.dataset.original=a.textContent);a.textContent=isTajik?(translations[original]||original):original;});
+  if(isTajik){notify('Қисми асосии матн ба тоҷикӣ гузаронида шуд; оятҳои Қуръон бо матни аслӣ нигоҳ дошта мешаванд.');}
+ });
+})();
+</script>
 </body>
 </html>
